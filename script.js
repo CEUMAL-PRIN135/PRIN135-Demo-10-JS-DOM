@@ -1,53 +1,85 @@
 /* Data */
 let todos = [
-	{ "id": "1", "text": "Task 1", "hours": 1, "completed": true },
-	{ "id": "2", "text": "Task 2", "hours": 2, "completed": false }
+    { "id": "1", "text": "Task 1", "hours": 1, "completed": true },
+    { "id": "2", "text": "Task 2", "hours": 2, "completed": false }
 ];
 
 /* DOM Elements */
 const list = document.getElementById("todo-list");
 
+const form = document.getElementById("todo-form");
+const input = document.getElementById("todo-input");
+const hoursInput = document.getElementById("hours-input");
+
 /* Functions */
 function getDifficulty(hours) {
-  if (hours > 5) return "Hard";
-  if (hours > 2) return "Medium";
-  return "Easy";
+    if (hours > 5) return "Hard";
+    if (hours > 2) return "Medium";
+    return "Easy";
 }
 
 function createTodoElement(todo) {
-  const li = document.createElement("li");
-  li.className = "todo-item" + (todo.completed ? " completed" : "");
-  li.dataset.id = todo.id;
+    const li = document.createElement("li");
+    li.className = "todo-item" + (todo.completed ? " completed" : "");
+    li.dataset.id = todo.id;
 
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.checked = todo.completed;
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = todo.completed;
 
-  const text = document.createElement("span");
-  text.className = "todo-text";
-  text.textContent = todo.text;
+    const text = document.createElement("span");
+    text.className = "todo-text";
+    text.textContent = todo.text;
 
-  const del = document.createElement("button");
-  del.type = "button";
-  del.className = "delete-btn";
-  del.textContent = "×";
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "delete-btn";
+    del.textContent = "×";
 
-  li.append(checkbox, text);
+    li.append(checkbox, text);
 
-  const hours = typeof todo.hours === "number" ? todo.hours : 0;
-  const difficulty = getDifficulty(hours);
-  const label = document.createElement("span");
-  label.className = `difficulty difficulty-${difficulty.toLowerCase()}`;
-  label.textContent = `${difficulty} · ${hours}h`;
-  li.append(label);
+    const hours = typeof todo.hours === "number" ? todo.hours : 0;
+    const difficulty = getDifficulty(hours);
+    const label = document.createElement("span");
+    label.className = `difficulty difficulty-${difficulty.toLowerCase()}`;
+    label.textContent = `${difficulty} · ${hours}h`;
+    li.append(label);
 
-  li.append(del);
-  return li;
+    li.append(del);
+    return li;
 }
 
 function render() {
-  const items = todos;
-  list.replaceChildren(...items.map(createTodoElement));
+    const items = todos;
+    list.replaceChildren(...items.map(createTodoElement));
 }
+
+function addTodo(text, hours) {
+    todos.push({
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        text,
+        hours,
+        completed: false,
+    });
+
+    render();
+}
+
+function parseHours(value) {
+    const parsed = parseFloat(value);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+}
+
+/* Event Listeners */
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    const hours = parseHours(hoursInput.value);
+    if (!text) return;
+    addTodo(text, hours);
+    input.value = "";
+    hoursInput.value = "";
+    input.focus();
+});
 
 render();
