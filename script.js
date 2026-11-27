@@ -4,6 +4,8 @@ let todos = [
     { "id": "2", "text": "Task 2", "hours": 2, "completed": false }
 ];
 
+let currentFilter = "all";
+
 /* DOM Elements */
 const list = document.getElementById("todo-list");
 
@@ -12,6 +14,8 @@ const input = document.getElementById("todo-input");
 const hoursInput = document.getElementById("hours-input");
 
 const countEl = document.getElementById("todo-count");
+
+const filterButtons = document.querySelectorAll(".filter");
 
 /* Functions */
 function getDifficulty(hours) {
@@ -52,7 +56,7 @@ function createTodoElement(todo) {
 }
 
 function render() {
-    const items = todos;
+    const items = visibleTodos();
     list.replaceChildren(...items.map(createTodoElement));
 
     const remaining = todos.filter((t) => !t.completed).length;
@@ -60,6 +64,11 @@ function render() {
     countEl.textContent =
         `${remaining} item${remaining === 1 ? "" : "s"} left | ` +
         `${hoursLeft} hour${hoursLeft === 1 ? "" : "s"} remaining`;
+
+    filterButtons.forEach((btn) => {
+        const active = btn.dataset.filter === currentFilter;
+        btn.classList.toggle("active", active);
+    });
 
 }
 
@@ -100,6 +109,12 @@ function totalHoursLeft() {
     return total;
 }
 
+function visibleTodos() {
+    if (currentFilter === "active") return todos.filter((t) => !t.completed);
+    if (currentFilter === "completed") return todos.filter((t) => t.completed);
+    return todos;
+}
+
 /* Event Listeners */
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -122,6 +137,13 @@ list.addEventListener("change", (e) => {
     if (e.target.matches('input[type="checkbox"]')) {
         toggleTodo(e.target.closest(".todo-item").dataset.id);
     }
+});
+
+filterButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        currentFilter = btn.dataset.filter;
+        render();
+    });
 });
 
 render();
