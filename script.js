@@ -75,6 +75,12 @@ function deleteTodo(id) {
     render();
 }
 
+function toggleTodo(id) {
+    const todo = todos.find((t) => t.id === id);
+    if (todo) todo.completed = !todo.completed;
+    render();
+}
+
 /* Event Listeners */
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -90,6 +96,12 @@ form.addEventListener("submit", (e) => {
 list.addEventListener("click", (e) => {
     if (e.target.matches(".delete-btn")) {
         deleteTodo(e.target.closest(".todo-item").dataset.id);
+    }
+});
+
+list.addEventListener("change", (e) => {
+    if (e.target.matches('input[type="checkbox"]')) {
+        toggleTodo(e.target.closest(".todo-item").dataset.id);
     }
 });
 
