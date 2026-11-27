@@ -11,6 +11,8 @@ const form = document.getElementById("todo-form");
 const input = document.getElementById("todo-input");
 const hoursInput = document.getElementById("hours-input");
 
+const countEl = document.getElementById("todo-count");
+
 /* Functions */
 function getDifficulty(hours) {
     if (hours > 5) return "Hard";
@@ -52,6 +54,13 @@ function createTodoElement(todo) {
 function render() {
     const items = todos;
     list.replaceChildren(...items.map(createTodoElement));
+
+    const remaining = todos.filter((t) => !t.completed).length;
+    const hoursLeft = totalHoursLeft();
+    countEl.textContent =
+        `${remaining} item${remaining === 1 ? "" : "s"} left | ` +
+        `${hoursLeft} hour${hoursLeft === 1 ? "" : "s"} remaining`;
+
 }
 
 function addTodo(text, hours) {
@@ -79,6 +88,16 @@ function toggleTodo(id) {
     const todo = todos.find((t) => t.id === id);
     if (todo) todo.completed = !todo.completed;
     render();
+}
+
+function totalHoursLeft() {
+    let total = 0;
+    for (const todo of todos) {
+        if (!todo.completed && typeof todo.hours === "number") {
+            total += todo.hours;
+        }
+    }
+    return total;
 }
 
 /* Event Listeners */
