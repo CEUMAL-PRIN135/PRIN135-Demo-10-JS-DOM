@@ -70,6 +70,11 @@ function parseHours(value) {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 }
 
+function deleteTodo(id) {
+    todos = todos.filter((t) => t.id !== id);
+    render();
+}
+
 /* Event Listeners */
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -80,6 +85,12 @@ form.addEventListener("submit", (e) => {
     input.value = "";
     hoursInput.value = "";
     input.focus();
+});
+
+list.addEventListener("click", (e) => {
+    if (e.target.matches(".delete-btn")) {
+        deleteTodo(e.target.closest(".todo-item").dataset.id);
+    }
 });
 
 render();
