@@ -19,6 +19,8 @@ const filterButtons = document.querySelectorAll(".filter");
 
 const toggleAllBtn = document.getElementById("toggle-all");
 
+const clearCompletedBtn = document.getElementById("clear-completed");
+
 /* Functions */
 function getDifficulty(hours) {
     if (hours > 5) return "Hard";
@@ -74,6 +76,9 @@ function render() {
 
     toggleAllBtn.hidden = todos.length === 0;
     toggleAllBtn.textContent = todos.length > 0 && todos.every((t) => t.completed) ? "Mark all active" : "Mark all done";
+
+    const hasCompleted = todos.some((t) => t.completed);
+    clearCompletedBtn.hidden = !hasCompleted;
 }
 
 function addTodo(text, hours) {
@@ -125,6 +130,11 @@ function toggleAll() {
     render();
 }
 
+function clearCompleted() {
+    todos = todos.filter((t) => !t.completed);
+    render();
+}
+
 /* Event Listeners */
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -158,4 +168,5 @@ filterButtons.forEach((btn) => {
 
 toggleAllBtn.addEventListener("click", toggleAll);
 
+clearCompletedBtn.addEventListener("click", clearCompleted);
 render();
