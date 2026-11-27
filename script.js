@@ -17,6 +17,8 @@ const countEl = document.getElementById("todo-count");
 
 const filterButtons = document.querySelectorAll(".filter");
 
+const toggleAllBtn = document.getElementById("toggle-all");
+
 /* Functions */
 function getDifficulty(hours) {
     if (hours > 5) return "Hard";
@@ -70,6 +72,8 @@ function render() {
         btn.classList.toggle("active", active);
     });
 
+    toggleAllBtn.hidden = todos.length === 0;
+    toggleAllBtn.textContent = todos.length > 0 && todos.every((t) => t.completed) ? "Mark all active" : "Mark all done";
 }
 
 function addTodo(text, hours) {
@@ -115,6 +119,12 @@ function visibleTodos() {
     return todos;
 }
 
+function toggleAll() {
+    const allDone = todos.length > 0 && todos.every((t) => t.completed);
+    todos.forEach((t) => (t.completed = !allDone));
+    render();
+}
+
 /* Event Listeners */
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -145,5 +155,7 @@ filterButtons.forEach((btn) => {
         render();
     });
 });
+
+toggleAllBtn.addEventListener("click", toggleAll);
 
 render();
